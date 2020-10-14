@@ -36,17 +36,17 @@ def main():
     os.mkdir('data')
 
     for urls in URLS:
+        file_name = f'data/{urls["year"]}.zip'
         response = requests.get(urls["url"])
 
-        file = open(f'data/{urls["year"]}.zip', 'wb')
+        file = open(file_name, 'wb')
         file.write(response.content)
 
-        with zipfile.ZipFile(f'data/{urls["year"]}.zip',
-                             'r') as zip_ref:
+        with zipfile.ZipFile(file_name, 'r') as zip_ref:
             zip_ref.extractall("data")
 
         file.close()
-        os.remove(f"data/{urls['year']}.zip")
+        os.remove(file_name)
 
 
 if __name__ == '__main__':
