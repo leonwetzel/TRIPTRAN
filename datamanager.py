@@ -43,10 +43,53 @@ def main():
         file.write(response.content)
 
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
-            zip_ref.extractall("data")
+            # upper_dir = zip_ref.filelist[0]
+            # print(upper_dir.filename)
+            # zip_ref.extractall(path="data", members=(
+            #     member for member in zip_ref.namelist()
+            #     if member.endswith('.xml'))
+            # )
+            zip_ref.extractall(path='data', members=get_members(zip_ref))
 
         file.close()
         os.remove(file_name)
+
+
+def get_members(zip):
+    """
+    Extracts the files from a given zip file.
+    Stolen from https://stackoverflow.com/questions/8689938/extract-files-from-zip-without-keep-the-top-level-folder-with-python-zipfile
+    :param zip:
+    :return:
+    """
+    parts = []
+    # get all the path prefixes
+    for name in zip.namelist():
+        print("Element name: ", name)
+        # only check files (not directories)
+        if not name.endswith('/'):
+            # keep list of path elements (minus filename)
+            parts.append(name.split('/')[:-1])
+            # print(name.split('/')[:-1])
+    # now find the common path prefix (if any)
+    prefix = os.path.commonprefix(parts)
+    if prefix:
+        # re-join the path elements
+        prefix = '/'.join(prefix) + '/'
+        print("Prefix: ", prefix, '\n')
+    # get the length of the common prefix
+    offset = len(prefix)
+    # now re-set the filenames
+    for zipinfo in zip.infolist():
+        name = zipinfo.filename
+        print("Name: ", name)
+        # only check files (not directories)
+        print(f"len(name) = {len(name)}, offset = {offset}")
+        if len(name) > offset:
+            print(name[offset:], '\n')
+            # remove the common prefix
+            zipinfo.filename = name[offset:]
+            yield zipinfo
 
 
 if __name__ == '__main__':
