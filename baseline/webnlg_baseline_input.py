@@ -36,7 +36,7 @@ def delexicalisation(out_src, out_trg, category, properties_objects):
     :param properties_objects: dictionary mapping properties to objects
     :return: delexicalised strings of the source and target; dictionary containing mappings of the replacements made
     """
-    with open('delex_dict.json') as data_file:
+    with open('delex_dict.json', 'r', encoding='utf-8') as data_file:
         data = json.load(data_file)
     # replace all occurrences of Alan_Bean to ASTRONAUT in input
     delex_subj = data[category]
@@ -115,9 +115,10 @@ def create_source_target(b, options, dataset, delex=True):
         random.shuffle(corpus)
         source_out, target_out = zip(*corpus)
 
-    with open(dataset + '-webnlg-' + options + '.triple', 'w+') as f:
+    with open(dataset + '-webnlg-' + options + '.triple', 'w+', encoding='utf-8') as f:
+        # print(source_out)
         f.write('\n'.join(source_out))
-    with open(dataset + '-webnlg-' + options + '.lex', 'w+') as f:
+    with open(dataset + '-webnlg-' + options + '.lex', 'w+', encoding='utf-8') as f:
         f.write('\n'.join(target_out))
 
     # create separate files with references for multi-bleu.pl for dev set
@@ -130,11 +131,11 @@ def create_source_target(b, options, dataset, delex=True):
         keys = [key for (key, value) in sorted(scr_refs.items())]
         values = [value for (key, value) in sorted(scr_refs.items())]
         # write the source file not delex
-        with open(options + '-source.triple', 'w+') as f:
+        with open(options + '-source.triple', 'w+', encoding='utf-8') as f:
             f.write('\n'.join(keys))
         # write references files
         for j in range(0, len(max_refs)):
-            with open(options + '-reference' + str(j) + '.lex', 'w+') as f:
+            with open(options + '-reference' + str(j) + '.lex', 'w+', encoding='utf-8') as f:
                 out = ''
                 for ref in values:
                     try:
@@ -166,16 +167,16 @@ def relexicalise(predfile, rplc_list):
         # f.write(''.join(relex_predictions))
 
     # create a mapping between not delex triples and relexicalised sents
-    with open('dev-webnlg-all-notdelex.triple', 'r') as f:
+    with open('dev-webnlg-all-notdelex.triple', 'r', encoding='utf-8') as f:
         dev_sources = [line.strip() for line in f]
     src_gens = {}
     for src, gen in zip(dev_sources, relex_predictions):
         src_gens[src] = gen  # need only one lex, because they are the same for a given triple
 
     # write generated sents to a file in the same order as triples are written in the source file
-    with open('all-notdelex-source.triple', 'r') as f:
+    with open('all-notdelex-source.triple', 'r', encoding='utf-8') as f:
         triples = [line.strip() for line in f]
-    with open('relexicalised_predictions.txt', 'w+') as f:
+    with open('relexicalised_predictions.txt', 'w+', encoding='utf-8') as f:
         for triple in triples:
             f.write(src_gens[triple])
 
