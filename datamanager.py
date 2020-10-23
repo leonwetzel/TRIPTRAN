@@ -43,12 +43,6 @@ def main():
         file.write(response.content)
 
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
-            # upper_dir = zip_ref.filelist[0]
-            # print(upper_dir.filename)
-            # zip_ref.extractall(path="data", members=(
-            #     member for member in zip_ref.namelist()
-            #     if member.endswith('.xml'))
-            # )
             zip_ref.extractall(path='data', members=get_members(zip_ref))
 
         file.close()
@@ -76,15 +70,12 @@ def get_members(zip):
     if prefix:
         # re-join the path elements
         prefix = '/'.join(prefix) + '/'
-        print("Prefix: ", prefix, '\n')
     # get the length of the common prefix
     offset = len(prefix)
     # now re-set the filenames
     for zipinfo in zip.infolist():
         name = zipinfo.filename
-        print("Name: ", name)
         # only check files (not directories)
-        print(f"len(name) = {len(name)}, offset = {offset}")
         if len(name) > offset:
             print(name[offset:], '\n')
             # remove the common prefix
