@@ -18,8 +18,8 @@ class Triple:
             self.object = args[2]
             self.lexical_examples = []
         elif isinstance(args[0], str):
-            # TODO: extract_triples implementeren/verbeteren
-            self.subject, self.predicate, self.object = args[0].split()
+            # input originates from XML file
+            self.subject, self.predicate, self.object = args[0].split('|')
             self.lexical_examples = []
 
     def add_lexical_example(self, example):
@@ -42,6 +42,13 @@ class Triple:
         self.lexical_examples.remove(example)
 
     def __str__(self):
+        """
+        Returns the delexicalised triple.
+        :return:
+        """
+        return f"{self.subject} {self.predicate} {self.object}"
+
+    def __repr__(self):
         """
         Returns the delexicalised triple.
         :return:
