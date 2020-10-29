@@ -11,6 +11,6 @@ for ent in entries:
     for x in entry:
         triple = x.find('modifiedtripleset').find('mtriple').text
         print('triple: ', triple)
-        newTriple = triple.split('|')
+        newTriple = triple.split(' | ')
         print(newTriple)
 
