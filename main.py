@@ -26,6 +26,9 @@ def main():
     with open('corpus.pkl', 'wb') as F:
         pickle.dump(corpus, F)
 
+    for triple in corpus[:100]:
+        print(triple.lexical_examples)
+
 
 def extract_information(file):
     """
@@ -45,7 +48,7 @@ def extract_information(file):
             lexical_comments = x.findall('lex')
             output = Triple(triple)
             for comment in lexical_comments:
-                output.add_lexical_example(comment)
+                output.add_lexical_example(comment.text)
             subcorpus.append(output)
 
     return subcorpus
