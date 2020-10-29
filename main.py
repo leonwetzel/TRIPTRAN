@@ -3,10 +3,15 @@ import os
 import pickle
 import xml.etree.ElementTree as ET
 
+import spacy
+
 from rdf import Triple
 
 
 DATA_DIR = "data"
+CORPUS_PICKLE = "corpus.pkl"
+
+nlp = spacy.load("en_core_web_sm")
 
 
 def main():
@@ -14,20 +19,32 @@ def main():
     Read XML files and store relevant information.
     :return:
     """
-    corpus = []
-    for subdir, dirs, files in os.walk(f'{DATA_DIR}'):
-        for filename in files:
-            filepath = subdir + os.sep + filename
+    if not os.path.isfile(CORPUS_PICKLE):
+        print("Constructing pickle...")
+        corpus = []
+        for subdir, dirs, files in os.walk(f'{DATA_DIR}'):
+            for filename in files:
+                filepath = subdir + os.sep + filename
 
-            if filepath.startswith(r"data\train")\
-                    and filepath.endswith("challenge.xml"):
-                corpus.extend(extract_information(filepath))
+                if filepath.startswith(r"data\train")\
+                        and filepath.endswith("challenge.xml"):
+                    corpus.extend(extract_information(filepath))
 
-    with open('corpus.pkl', 'wb') as F:
-        pickle.dump(corpus, F)
+        with open(CORPUS_PICKLE, 'wb') as F:
+            pickle.dump(corpus, F)
+    else:
+        print("Loading pickle...")
+        with open(CORPUS_PICKLE, 'rb') as F:
+            corpus = pickle.load(F)
 
     for triple in corpus[:100]:
-        print(triple.lexical_examples)
+        print(triple)
+        for sentence in triple.lexical_examples:
+            doc = nlp(sentence)
+
+            for token in doc:
+                print(token.text, token.pos_, token.dep_)
+            print()
 
 
 def extract_information(file):
