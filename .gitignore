@@ -133,3 +133,5 @@ data
 
 *.lex
 *.triple
+
+*.pkl
