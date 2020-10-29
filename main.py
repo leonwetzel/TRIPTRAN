@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import pickle
 import xml.etree.ElementTree as ET
 
 from rdf import Triple
@@ -21,6 +22,9 @@ def main():
             if filepath.startswith(r"data\train")\
                     and filepath.endswith("challenge.xml"):
                 corpus.extend(extract_information(filepath))
+
+    with open('corpus.pkl', 'wb') as F:
+        pickle.dump(corpus, F)
 
 
 def extract_information(file):
