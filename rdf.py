@@ -6,9 +6,6 @@ class Triple:
         """
         Constructs an RDF triple, using the given values.
         This triple is also known as a delexicalised triple.
-        :param subject:
-        :param predicate:
-        :param object:
         """
         if not args:
             raise ValueError(
@@ -19,9 +16,30 @@ class Triple:
             self.subject = args[0]
             self.predicate = args[1]
             self.object = args[2]
+            self.lexical_examples = []
         elif isinstance(args[0], str):
-            # TODO: extract_triples implementeren
-            pass
+            # TODO: extract_triples implementeren/verbeteren
+            self.subject, self.predicate, self.object = args[0].split()
+            self.lexical_examples = []
+
+    def add_lexical_example(self, example):
+        """
+        Adds a lexical example to an RDF triple.
+        The example reflects the subject, predicate
+        and object values in a lexical way.
+        :param example:
+        :return:
+        """
+        self.lexical_examples.append(example)
+
+    def remove_lexical_example(self, example):
+        """
+        Removes a lexical example from an
+        RDF triple.
+        :param example:
+        :return:
+        """
+        self.lexical_examples.remove(example)
 
     def __str__(self):
         """
