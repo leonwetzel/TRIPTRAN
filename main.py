@@ -10,6 +10,7 @@ from rdf import Triple
 
 DATA_DIR = "data"
 CORPUS_PICKLE = "corpus.pkl"
+DEVCORPUS_PICKLE = "devcorpus.pkl"
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -27,7 +28,7 @@ def main():
                 filepath = subdir + os.sep + filename
 
                 if filepath.startswith(r"data\train")\
-                        and filepath.endswith("challenge.xml"):
+                        and filepath.endswith("challenge.xml") and "1triple" in filepath:
                     corpus.extend(extract_information(filepath))
 
         with open(CORPUS_PICKLE, 'wb') as F:
@@ -37,14 +38,34 @@ def main():
         with open(CORPUS_PICKLE, 'rb') as F:
             corpus = pickle.load(F)
 
-    for triple in corpus[:100]:
-        print(triple)
-        for sentence in triple.lexical_examples:
-            doc = nlp(sentence)
+    # Same for devcorpus:
+    if not os.path.isfile(DEVCORPUS_PICKLE):
+        print("Constructing pickle...")
+        devcorpus = []
+        for subdir, dirs, files in os.walk(f'{DATA_DIR}'):
+            for filename in files:
+                filepath = subdir + os.sep + filename
 
-            for token in doc:
-                print(token.text, token.pos_, token.dep_)
-            print()
+                if filepath.startswith(r"data\dev")\
+                        and filepath.endswith("challenge.xml") and "1triple" in filepath:
+                    devcorpus.extend(extract_information(filepath))
+
+        with open('devcorpus.pkl', 'wb') as F1:
+            pickle.dump(devcorpus, F1)
+    else:
+        print("Loading pickle...")
+        with open(DEVCORPUS_PICKLE, 'rb') as F:
+            corpus = pickle.load(F)
+
+
+    # for triple in corpus[:100]:
+    #     print(triple)
+    #     for sentence in triple.lexical_examples:
+    #         doc = nlp(sentence)
+
+    #         for token in doc:
+    #             print(token.text, token.pos_, token.dep_)
+    #         print()
 
 
 def extract_information(file):
