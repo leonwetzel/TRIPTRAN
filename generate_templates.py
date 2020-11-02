@@ -10,27 +10,30 @@ def clean_predicate(pred):
     predicate = re.sub(r'([A-Z])', r' \1', predicate)
     predicate = predicate.lower()
     # convert to a list:
-    predicate = predicate.split(" ")
-    return predicate
+    predicateList = predicate.split(" ")
+    return predicate, predicateList
 
 def noun_rule(triple):
-    sentence = "The " + triple.predicate + " of " + triple.subject + " is " + triple.object
+    sentence = "The " + clean_predicate(triple.predicate)[0] + " of " + clean_names(triple.subject) + " is " + clean_names(triple.object)
     sentence = " ".join(sentence.split())
     return sentence
 
 def verb_rule(triple):
-    sentence = triple.subject +  " is " +  triple.predicate + triple.object
+    sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] + clean_names(triple.object)
     sentence = " ".join(sentence.split())
     return sentence
 
 def generate_rule_based_sentence(triple):
-    pred = clean_predicate(triple.predicate)
+    predicate, predicateList = clean_predicate(triple.predicate)
+    print(get_pos_tag(predicateList))
     # pred = ['NN']
     # pred = ['JJ', 'NN']
-    if get_pos_tag(pred) == 'NN':
+    if get_pos_tag(predicateList)[-1] == 'NN' or get_pos_tag(predicateList)[-1] == 'NNS':
        sentence = noun_rule(triple)
-    elif get_pos_tag(pred) == 'VB':
+    elif get_pos_tag(predicateList) == 'VB':
         sentence = verb_rule(triple)
+    else: 
+        sentence = '...'
     return sentence
 
 def clean_names(name):
