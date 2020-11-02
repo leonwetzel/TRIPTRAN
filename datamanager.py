@@ -17,10 +17,8 @@ URLS = [
 
 
 def download():
-    """
-    Script for downloading all the relevant WebNLG files,
-    used for testing, development and training.
-    :return:
+    """ Script for downloading all the relevant WebNLG files,
+        used for testing, development and training.
     """
     if os.path.isdir('data'):
         check = input("The data directory already exists."
@@ -55,11 +53,13 @@ def download():
 
 
 def get_members(zip):
-    """
-    Extracts the files from a given zip file.
-    Stolen from https://stackoverflow.com/questions/8689938/extract-files-from-zip-without-keep-the-top-level-folder-with-python-zipfile
-    :param zip:
-    :return:
+    """ Extracts the files from a given zip file. Stolen from\
+     https://stackoverflow.com/questions/8689938/extract-files-from-zip-without-keep-the-top-level-folder-with-python-zipfile
+
+    Parameters
+    ----------
+    zip : ZipFile
+        ZIP file containing the XML files with the data.
     """
     parts = []
     # get all the path prefixes
@@ -89,11 +89,12 @@ def get_members(zip):
 
 
 def extract_information(file):
-    """
-    Extract relevant information from
-    the XML files.
-    :param file:
-    :return:
+    """Extract relevant information from the XML files.
+
+    Parameters
+    ----------
+    file : str
+        XML file of which information can be extracted.
     """
     subcorpus = []
     tree = ET.parse(file)
@@ -114,8 +115,7 @@ def extract_information(file):
 
 def load_corpus(data_directory, pickle_name, type='train', suffix='challenge',
                 triple_size=1):
-    """
-        Loads the WebNLG corpus into or from a pickle.
+    """ Loads the WebNLG corpus into or from a pickle.
 
         Parameters
         ----------
