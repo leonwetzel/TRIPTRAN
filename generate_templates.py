@@ -19,7 +19,7 @@ def noun_rule(triple):
     return sentence
 
 def verb_rule(triple):
-    sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] + clean_names(triple.object)
+    sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" "  + clean_names(triple.object)
     sentence = " ".join(sentence.split())
     return sentence
 
@@ -30,7 +30,7 @@ def generate_rule_based_sentence(triple):
     # pred = ['JJ', 'NN']
     if get_pos_tag(predicateList)[-1] == 'NN' or get_pos_tag(predicateList)[-1] == 'NNS':
        sentence = noun_rule(triple)
-    elif get_pos_tag(predicateList) == 'VB':
+    elif 'VBN' in  get_pos_tag(predicateList) or 'VBD' in get_pos_tag(predicateList):
         sentence = verb_rule(triple)
     else: 
         sentence = '...'
@@ -120,7 +120,7 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
         cleanSubj  = clean_names(triple.subject)
         cleanObj = clean_names(triple.object)
         pred = triple.predicate
-        print(triple)
+        #print(triple)
         # Test whether there is a template for the current predicate:
         if pred in singleTemplates: 
             # Fill in the subject and object of the triple in the template sentence:
@@ -129,6 +129,7 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
             sentence = clean_sentence(sentence)
             #print('Generated sentence: ' +sentence)
         else:
+            print(triple)
             notFound.append(pred)
             sentence = generate_rule_based_sentence(triple)
             print(sentence)
