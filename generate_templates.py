@@ -1,4 +1,32 @@
 import pickle
+import re
+
+def clean_predicate(pred):
+    '''Split the predicate by upper cases, make everything lower case and convert to list '''
+    predicate = " ".join(pred.split())
+    predicate = re.sub(r'([A-Z])', r' \1', predicate)
+    predicate = predicate.lower()
+    # convert to a list:
+    predicate = predicate.split(" ")
+    return predicate
+
+def noun_rule(triple):
+    sentence = "The " + triple.predicate + " of " + triple.subject + " is " + triple.object
+    sentence = " ".join(sentence.split())
+    return sentence
+
+def verb_rule(triple):
+    sentence = triple.subject +  " is " +  triple.predicate + triple.object
+    sentence = " ".join(sentence.split())
+    return sentence
+
+def generate_rule_based_sentence(triple):
+    pred = clean_predicate(triple.predicate)
+    if get_pos_tag(pred) == 'noun':
+       sentence = noun_rule(triple)
+    elif get_pos_tag(pred) == 'verb':
+        sentence = verb_rule(triple)
+    return sentence
 
 def clean_names(name):
     # Replace underscores by spaces:
@@ -91,9 +119,11 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
             sentence = singleTemplates[pred].replace('SUBJ', cleanSubj)
             sentence = sentence.replace('OBJ', cleanObj)
             sentence = clean_sentence(sentence)
-            print('Generated sentence: ' +sentence)
+            #print('Generated sentence: ' +sentence)
         else:
             notFound.append(pred)
+            sentence = generate_rule_based_sentence(triple)
+            print(sentence)
             print("No sentence with such predicate in the training corpus")
     return notFound
 
