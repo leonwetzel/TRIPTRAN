@@ -131,10 +131,14 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
             sentence = sentence.replace('OBJ', cleanObj)
             sentence = clean_sentence(sentence)
             print('Generated sentence: ' +sentence)
+            print('Original sentences: ')
+            print(triple.lexical_examples)
         else:
             notFound.append(pred)
             sentence = generate_rule_based_sentence(triple)
             print('Generated sentence: ' + sentence)
+            print('Original sentences: ')
+            print(triple.lexical_examples)
             #print("No sentence with such predicate in the training corpus")
     return notFound
 
