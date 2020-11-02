@@ -1,6 +1,9 @@
 import pickle
 import re
 
+from feature_engineering import get_pos_tag
+
+
 def clean_predicate(pred):
     '''Split the predicate by upper cases, make everything lower case and convert to list '''
     predicate = " ".join(pred.split())
@@ -22,9 +25,9 @@ def verb_rule(triple):
 
 def generate_rule_based_sentence(triple):
     pred = clean_predicate(triple.predicate)
-    if get_pos_tag(pred) == 'noun':
+    if get_pos_tag(pred) == 'NN':
        sentence = noun_rule(triple)
-    elif get_pos_tag(pred) == 'verb':
+    elif get_pos_tag(pred) == 'VB':
         sentence = verb_rule(triple)
     return sentence
 
