@@ -78,9 +78,9 @@ def get_pos_tag(tokens):
     """
     pos_tags = []
     if len(tokens) > 1:
-        pos_tags = nltk.pos_tag(tokens)
+        pos_tags = [token[1] for token in nltk.pos_tag(tokens)]
     elif len([tokens]) == 1:
-        pos_tags = nltk.pos_tag(tokens)
+        pos_tags = [token[1] for token in nltk.pos_tag(tokens)]
     return pos_tags
 
 

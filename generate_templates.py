@@ -25,6 +25,8 @@ def verb_rule(triple):
 
 def generate_rule_based_sentence(triple):
     pred = clean_predicate(triple.predicate)
+    # pred = ['NN']
+    # pred = ['JJ', 'NN']
     if get_pos_tag(pred) == 'NN':
        sentence = noun_rule(triple)
     elif get_pos_tag(pred) == 'VB':
