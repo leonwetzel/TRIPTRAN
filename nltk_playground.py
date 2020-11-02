@@ -1,5 +1,4 @@
 from nltk.corpus import wordnet as wn
-from feature_engineering import convert
 
 
 def main():
@@ -11,7 +10,7 @@ def main():
     for more information.
     :return:
     """
-    sample = "location"
+    sample = "serves"
     synonyms = []
     antonyms = []
 

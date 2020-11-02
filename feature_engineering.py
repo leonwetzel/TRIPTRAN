@@ -1,6 +1,8 @@
 import nltk
 from nltk.corpus import wordnet as wn
 
+import dateparser
+
 
 # Just to make it a bit more readable
 WN_NOUN = 'n'
@@ -93,8 +95,15 @@ if __name__ == '__main__':
     print(convert('studying', 'v', 'n'))
     print(convert('dinner', 'n', 'v'))
     print(convert('eat', 'v', 'r'))
+    print()
 
     print(get_pos_tag(["cheese"]))
     print(get_pos_tag(["hot", "dog"]))
     print(get_pos_tag(["clock", "house"]))
     print(get_pos_tag(["is", "part", "of"]))
+    print(get_pos_tag(["affiliated"]))
+    print(get_pos_tag(["current", "tennants"]))
+
+    sample = "2020-02-21"
+
+    print(dateparser.parse(sample))
