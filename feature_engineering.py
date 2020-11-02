@@ -71,10 +71,12 @@ def convert(word, from_pos, to_pos):
 
 
 def get_pos_tag(tokens):
-    """
+    """ Retrieves the POS tags of a given list of tokens.
 
-    :param word:
-    :return:
+    Parameters
+    ----------
+    tokens : list
+        A list of tokens, originating from a predicate.
     """
     pos_tags = []
     if len(tokens) > 1:
