@@ -71,4 +71,7 @@ def convert(word, from_pos, to_pos):
 if __name__ == '__main__':
     print(convert('hurry', 'v', 'n'))
     print(convert('destroy', 'v', 'n'))
-    print(convert('affiliations', 'n', 'v'))
+    print(convert('affiliation', 'n', 'v'))
+    print(convert('studying', 'v', 'n'))
+    print(convert('dinner', 'n', 'v'))
+    print(convert('eat', 'v', 'r'))
