@@ -98,8 +98,8 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
 with open('corpus.pkl', 'rb') as F:
     corpus = pickle.load(F)
 # Read test corpus:
-with open('devcorpus.pkl', 'rb') as F1:
-    devcorpus = pickle.load(F1)
+with open('devcorpus.pkl', 'rb') as F:
+    devcorpus = pickle.load(F)
     
 # Generate templates:
 templates, singleTemplates = generate_templates(corpus)

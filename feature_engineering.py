@@ -1,4 +1,6 @@
+import nltk
 from nltk.corpus import wordnet as wn
+
 
 # Just to make it a bit more readable
 WN_NOUN = 'n'
@@ -68,6 +70,20 @@ def convert(word, from_pos, to_pos):
     return result
 
 
+def get_pos_tag(tokens):
+    """
+
+    :param word:
+    :return:
+    """
+    pos_tags = []
+    if len(tokens) > 1:
+        pos_tags = nltk.pos_tag(tokens)
+    elif len([tokens]) == 1:
+        pos_tags = nltk.pos_tag(tokens)
+    return pos_tags
+
+
 if __name__ == '__main__':
     print(convert('hurry', 'v', 'n'))
     print(convert('destroy', 'v', 'n'))
@@ -75,3 +91,8 @@ if __name__ == '__main__':
     print(convert('studying', 'v', 'n'))
     print(convert('dinner', 'n', 'v'))
     print(convert('eat', 'v', 'r'))
+
+    print(get_pos_tag(["cheese"]))
+    print(get_pos_tag(["hot", "dog"]))
+    print(get_pos_tag(["clock", "house"]))
+    print(get_pos_tag(["is", "part", "of"]))
