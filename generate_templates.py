@@ -1,24 +1,26 @@
 import pickle
 
 def clean_names(name):
-    # Remove dots if name is not a number:
-    # if isinstance(name, str):
-    #     name = name.replace('.', '')
     # Replace underscores by spaces:
     name = name.replace('_', ' ')
     # Remove redundant spaces:
-    # Er zijn nog spaties voor en na het woord
-    " ".join(name.split())
+    name = " ".join(name.split())
     return name
+
+def clean_sentence(sentence):
+    # If there is a space in front of a dot, remove it:
+    sentence = sentence.replace(" .", ".")
+    # TODO: In de output kijken of er nog meer nodig is.
+    return sentence
 
 def generalize_sentence(subj, obj, sentence):
     ''' Replaces the subject and object in a sentence by SUBJ and OBJ to create a template sentence.'''
     newSubject = clean_names(subj)
     newObject = clean_names(obj)
-    template = sentence.replace(newSubject, 'SUBJ')
-    template = template.replace(newObject, 'OBJ')
+    template = sentence.replace(newSubject, ' SUBJ ')
+    template = template.replace(newObject, ' OBJ ')
     # Remove redundant whitespaces:
-    " ".join(template.split())
+    template = " ".join(template.split())
     return template
 
 def add_values_in_dict(dictionary, key, values):
@@ -28,9 +30,15 @@ def add_values_in_dict(dictionary, key, values):
     dictionary[key].extend(values)
     return dictionary
 
+def most_frequent(List): 
+    '''Returns the most frequent item of a list. If multiple occur the same number of times, it returns the last of those.'''
+    return max(set(List), key = List.count) 
+  
+
 def generate_templates(traincorpus):
     '''Reads a training corpus and generates templates from the examples in it'''
     templates = {}
+    singleTemplates = {}
     for triple in traincorpus:
         subj = triple.subject
         obj = triple.object
@@ -43,23 +51,46 @@ def generate_templates(traincorpus):
             # Only add the template to the dictionary if subject and object are properly replaced.
             if 'SUBJ' in template and 'OBJ' in template: 
                 templates = add_values_in_dict(templates, pred, [template])
-    return templates
+    # Find most frequent template:
+    for pred in templates:
+        singleTemplates[pred] = most_frequent(templates[pred])
+    # Remove duplicates from templates:
+    for pred in templates:
+        templates[pred] = list(set(templates[pred]))
+    return templates, singleTemplates
 
-def fill_in_templates(templates, testcorpus):
-    '''Reads the triples from a testcorpus and generates sentences from them using the templates'''
+def fill_in_all_templates(templates, testcorpus):
+    '''Reads the triples from a testcorpus and generates multiple sentences from them using all templates'''
     for triple in testcorpus[:10]: # Read only first 10 triples (for developmental purposes)
         cleanSubj  = clean_names(triple.subject)
         cleanObj = clean_names(triple.object)
         pred = triple.predicate
+        print(triple)
         # Test whether there is a template for the current predicate:
         if pred in templates: 
             # For all example sentences of this predicate, fill in the subject and object of the triple in the template:
             for lexical_example in templates[pred]:
-                print(triple)
                 sentence = lexical_example.replace('SUBJ', cleanSubj)
                 sentence = sentence.replace('OBJ', cleanObj)
+                sentence = clean_sentence(sentence)
                 print('Generated sentence: ' +sentence)
+        else:
+            print("No sentence with such predicate in the training corpus")
 
+def fill_in_most_frequent_template(singleTemplates, testcorpus):
+    '''Reads the triples from a testcorpus and generates one sentence for each triple, from the most frequent template in the training sentences'''
+    for triple in testcorpus[:50]: # Read only first 10 triples (for developmental purposes)
+        cleanSubj  = clean_names(triple.subject)
+        cleanObj = clean_names(triple.object)
+        pred = triple.predicate
+        print(triple)
+        # Test whether there is a template for the current predicate:
+        if pred in singleTemplates: 
+            # Fill in the subject and object of the triple in the template sentence:
+            sentence = singleTemplates[pred].replace('SUBJ', cleanSubj)
+            sentence = sentence.replace('OBJ', cleanObj)
+            sentence = clean_sentence(sentence)
+            print('Generated sentence: ' +sentence)
         else:
             print("No sentence with such predicate in the training corpus")
 
@@ -69,7 +100,10 @@ with open('corpus.pkl', 'rb') as F:
 # Read test corpus:
 with open('devcorpus.pkl', 'rb') as F1:
     devcorpus = pickle.load(F1)
+    
 # Generate templates:
-templates = generate_templates(corpus)
-# Generate sentences from test triples:
-fill_in_templates(templates, devcorpus)
+templates, singleTemplates = generate_templates(corpus)
+
+# Generate sentences from test triples (choose whether you want all sentences or only the most frequent one):
+#fill_in_all_templates(templates, devcorpus)
+fill_in_most_frequent_template(singleTemplates, devcorpus)
