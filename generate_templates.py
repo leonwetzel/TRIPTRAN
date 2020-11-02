@@ -79,7 +79,8 @@ def fill_in_all_templates(templates, testcorpus):
 
 def fill_in_most_frequent_template(singleTemplates, testcorpus):
     '''Reads the triples from a testcorpus and generates one sentence for each triple, from the most frequent template in the training sentences'''
-    for triple in testcorpus[:50]: # Read only first 10 triples (for developmental purposes)
+    notFound = []
+    for triple in testcorpus: # Read only first 10 triples (for developmental purposes)
         cleanSubj  = clean_names(triple.subject)
         cleanObj = clean_names(triple.object)
         pred = triple.predicate
@@ -92,7 +93,9 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
             sentence = clean_sentence(sentence)
             print('Generated sentence: ' +sentence)
         else:
+            notFound.append(pred)
             print("No sentence with such predicate in the training corpus")
+    return notFound
 
 # Read training corpus:
 with open('corpus.pkl', 'rb') as F:
@@ -106,4 +109,6 @@ templates, singleTemplates = generate_templates(corpus)
 
 # Generate sentences from test triples (choose whether you want all sentences or only the most frequent one):
 #fill_in_all_templates(templates, devcorpus)
-fill_in_most_frequent_template(singleTemplates, devcorpus)
+notFound = fill_in_most_frequent_template(singleTemplates, devcorpus)
+print("Not found: ")
+print(notFound)
