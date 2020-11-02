@@ -13,6 +13,7 @@ class Triple:
                 "either a string, or subject, predicate and object values.")
 
         if len(args) == 3:
+            # input originates from separate values
             self.subject = args[0]
             self.predicate = args[1]
             self.object = args[2]
@@ -53,4 +54,4 @@ class Triple:
         Returns the delexicalised triple.
         :return:
         """
-        return f"{self.subject} {self.predicate} {self.object}"
+        return self.__str__()
