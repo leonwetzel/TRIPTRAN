@@ -1,7 +1,12 @@
 import os
+import pickle
 import shutil
 import requests
 import zipfile
+
+import xml.etree.ElementTree as ET
+
+from rdf import Triple
 
 URLS = [
     {"year": 2017,
@@ -11,7 +16,7 @@ URLS = [
 ]
 
 
-def main():
+def download():
     """
     Script for downloading all the relevant WebNLG files,
     used for testing, development and training.
@@ -83,5 +88,68 @@ def get_members(zip):
             yield zipinfo
 
 
-if __name__ == '__main__':
-    main()
+def extract_information(file):
+    """
+    Extract relevant information from
+    the XML files.
+    :param file:
+    :return:
+    """
+    subcorpus = []
+    tree = ET.parse(file)
+    entries = tree.findall('entries')
+
+    for ent in entries:
+        entry = ent.findall('entry')
+        for x in entry:
+            triple = x.find('modifiedtripleset').find('mtriple').text
+            lexical_comments = x.findall('lex')
+            output = Triple(triple)
+            for comment in lexical_comments:
+                output.add_lexical_example(comment.text)
+            subcorpus.append(output)
+
+    return subcorpus
+
+
+def load_corpus(data_directory, pickle_name, type='train', suffix='challenge',
+                triple_size=1):
+    """
+        Loads the WebNLG corpus into or from a pickle.
+
+        Parameters
+        ----------
+        data_directory : str
+            Directory containing all the WebNLG data
+        pickle_name : str
+            Name of the pickle file.
+        type : str
+            Indicates which part of the data should be used.
+            Can be either train, dev or test.
+        suffix : str
+            Part of file name indicating which data of WebNLG should
+            be used. Can be either 'challenge' (2017 edition) or
+            'release' (2020 edition).
+        triple_size : int
+            Amount of triples per item
+    """
+    if not os.path.isfile(pickle_name):
+        print("Constructing pickle...")
+        corpus = []
+        for subdir, dirs, files in os.walk(f'{data_directory}'):
+            for filename in files:
+                filepath = subdir + os.sep + filename
+
+                if filepath.startswith(rf"data\{type}") \
+                        and filepath.endswith(
+                    f"{suffix}.xml") and f"{triple_size}triples" in filepath:
+                    corpus.extend(extract_information(filepath))
+
+        with open(pickle_name, 'wb') as F:
+            pickle.dump(corpus, F)
+    else:
+        print("Loading pickle...")
+        with open(pickle_name, 'rb') as F:
+            corpus = pickle.load(F)
+
+    return corpus
