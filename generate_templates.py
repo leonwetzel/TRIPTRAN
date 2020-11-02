@@ -1,5 +1,6 @@
 import pickle
 import re
+import dateparser
 
 from feature_engineering import get_pos_tag
 
@@ -10,27 +11,32 @@ def clean_predicate(pred):
     predicate = re.sub(r'([A-Z])', r' \1', predicate)
     predicate = predicate.lower()
     # convert to a list:
-    predicate = predicate.split(" ")
-    return predicate
+    predicateList = predicate.split(" ")
+    return predicate, predicateList
 
 def noun_rule(triple):
-    sentence = "The " + triple.predicate + " of " + triple.subject + " is " + triple.object
+    sentence = "The " + clean_predicate(triple.predicate)[0] + " of " + clean_names(triple.subject) + " is " + clean_names(triple.object)
     sentence = " ".join(sentence.split())
     return sentence
 
 def verb_rule(triple):
-    sentence = triple.subject +  " is " +  triple.predicate + triple.object
+    if dateparser.parse(triple.object) == None:
+        sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" "  + clean_names(triple.object)
+    else: 
+        # If the object is a date, use a different template:
+        sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" on "  + clean_names(triple.object)
     sentence = " ".join(sentence.split())
     return sentence
 
 def generate_rule_based_sentence(triple):
-    pred = clean_predicate(triple.predicate)
-    # pred = ['NN']
-    # pred = ['JJ', 'NN']
-    if get_pos_tag(pred) == 'NN':
+    predicate, predicateList = clean_predicate(triple.predicate)
+    #print(get_pos_tag(predicateList))
+    if get_pos_tag(predicateList)[-1] == 'NN' or get_pos_tag(predicateList)[-1] == 'NNS':
        sentence = noun_rule(triple)
-    elif get_pos_tag(pred) == 'VB':
+    elif 'VBN' in  get_pos_tag(predicateList) or 'VBD' in get_pos_tag(predicateList):
         sentence = verb_rule(triple)
+    else: 
+        sentence = '...'
     return sentence
 
 def clean_names(name):
@@ -124,12 +130,16 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
             sentence = singleTemplates[pred].replace('SUBJ', cleanSubj)
             sentence = sentence.replace('OBJ', cleanObj)
             sentence = clean_sentence(sentence)
-            #print('Generated sentence: ' +sentence)
+            print('Generated sentence: ' +sentence)
+            print('Original sentences: ')
+            print(triple.lexical_examples)
         else:
             notFound.append(pred)
             sentence = generate_rule_based_sentence(triple)
-            print(sentence)
-            print("No sentence with such predicate in the training corpus")
+            print('Generated sentence: ' + sentence)
+            print('Original sentences: ')
+            print(triple.lexical_examples)
+            #print("No sentence with such predicate in the training corpus")
     return notFound
 
 # Read training corpus:
@@ -145,5 +155,5 @@ templates, singleTemplates = generate_templates(corpus)
 # Generate sentences from test triples (choose whether you want all sentences or only the most frequent one):
 #fill_in_all_templates(templates, devcorpus)
 notFound = fill_in_most_frequent_template(singleTemplates, devcorpus)
-print("Not found: ")
+print("Generated with rules: ")
 print(notFound)
