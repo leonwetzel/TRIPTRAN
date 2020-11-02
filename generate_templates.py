@@ -1,5 +1,6 @@
 import pickle
 import re
+import dateparser
 
 from feature_engineering import get_pos_tag
 
@@ -19,7 +20,10 @@ def noun_rule(triple):
     return sentence
 
 def verb_rule(triple):
-    sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" "  + clean_names(triple.object)
+    if dateparser.parse(triple.object) == None:
+        sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" "  + clean_names(triple.object)
+    else: 
+        sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" on "  + clean_names(triple.object)
     sentence = " ".join(sentence.split())
     return sentence
 
