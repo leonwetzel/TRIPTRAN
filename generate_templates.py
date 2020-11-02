@@ -23,15 +23,14 @@ def verb_rule(triple):
     if dateparser.parse(triple.object) == None:
         sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" "  + clean_names(triple.object)
     else: 
+        # If the object is a date, use a different template:
         sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" on "  + clean_names(triple.object)
     sentence = " ".join(sentence.split())
     return sentence
 
 def generate_rule_based_sentence(triple):
     predicate, predicateList = clean_predicate(triple.predicate)
-    print(get_pos_tag(predicateList))
-    # pred = ['NN']
-    # pred = ['JJ', 'NN']
+    #print(get_pos_tag(predicateList))
     if get_pos_tag(predicateList)[-1] == 'NN' or get_pos_tag(predicateList)[-1] == 'NNS':
        sentence = noun_rule(triple)
     elif 'VBN' in  get_pos_tag(predicateList) or 'VBD' in get_pos_tag(predicateList):
@@ -124,20 +123,19 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
         cleanSubj  = clean_names(triple.subject)
         cleanObj = clean_names(triple.object)
         pred = triple.predicate
-        #print(triple)
+        print(triple)
         # Test whether there is a template for the current predicate:
         if pred in singleTemplates: 
             # Fill in the subject and object of the triple in the template sentence:
             sentence = singleTemplates[pred].replace('SUBJ', cleanSubj)
             sentence = sentence.replace('OBJ', cleanObj)
             sentence = clean_sentence(sentence)
-            #print('Generated sentence: ' +sentence)
+            print('Generated sentence: ' +sentence)
         else:
-            print(triple)
             notFound.append(pred)
             sentence = generate_rule_based_sentence(triple)
-            print(sentence)
-            print("No sentence with such predicate in the training corpus")
+            print('Generated sentence: ' + sentence)
+            #print("No sentence with such predicate in the training corpus")
     return notFound
 
 # Read training corpus:
@@ -153,5 +151,5 @@ templates, singleTemplates = generate_templates(corpus)
 # Generate sentences from test triples (choose whether you want all sentences or only the most frequent one):
 #fill_in_all_templates(templates, devcorpus)
 notFound = fill_in_most_frequent_template(singleTemplates, devcorpus)
-print("Not found: ")
+print("Generated with rules: ")
 print(notFound)
