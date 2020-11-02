@@ -2,11 +2,12 @@ import pickle
 
 def clean_names(name):
     # Remove dots if name is not a number:
-    if isinstance(name, str):
-        name = name.replace('.', '')
+    # if isinstance(name, str):
+    #     name = name.replace('.', '')
     # Replace underscores by spaces:
     name = name.replace('_', ' ')
     # Remove redundant spaces:
+    # Er zijn nog spaties voor en na het woord
     " ".join(name.split())
     return name
 
@@ -14,8 +15,8 @@ def generalize_sentence(subj, obj, sentence):
     ''' Replaces the subject and object in a sentence by SUBJ and OBJ to create a template sentence.'''
     newSubject = clean_names(subj)
     newObject = clean_names(obj)
-    template = sentence.replace(newSubject, ' SUBJ ')
-    template = template.replace(newObject, ' OBJ ')
+    template = sentence.replace(newSubject, 'SUBJ')
+    template = template.replace(newObject, 'OBJ')
     # Remove redundant whitespaces:
     " ".join(template.split())
     return template
