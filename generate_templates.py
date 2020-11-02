@@ -1,4 +1,32 @@
 import pickle
+import re
+
+def clean_predicate(pred):
+    '''Split the predicate by upper cases, make everything lower case and convert to list '''
+    predicate = " ".join(pred.split())
+    predicate = re.sub(r'([A-Z])', r' \1', predicate)
+    predicate = predicate.lower()
+    # convert to a list:
+    predicate = predicate.split(" ")
+    return predicate
+
+def noun_rule(triple):
+    sentence = "The " + triple.predicate + " of " + triple.subject + " is " + triple.object
+    sentence = " ".join(sentence.split())
+    return sentence
+
+def verb_rule(triple):
+    sentence = triple.subject +  " is " +  triple.predicate + triple.object
+    sentence = " ".join(sentence.split())
+    return sentence
+
+def generate_rule_based_sentence(triple):
+    pred = clean_predicate(triple.predicate)
+    if get_pos_tag(pred) == 'noun':
+       sentence = noun_rule(triple)
+    elif get_pos_tag(pred) == 'verb':
+        sentence = verb_rule(triple)
+    return sentence
 
 def clean_names(name):
     # Replace underscores by spaces:
@@ -79,7 +107,8 @@ def fill_in_all_templates(templates, testcorpus):
 
 def fill_in_most_frequent_template(singleTemplates, testcorpus):
     '''Reads the triples from a testcorpus and generates one sentence for each triple, from the most frequent template in the training sentences'''
-    for triple in testcorpus[:50]: # Read only first 10 triples (for developmental purposes)
+    notFound = []
+    for triple in testcorpus: # Read only first 10 triples (for developmental purposes)
         cleanSubj  = clean_names(triple.subject)
         cleanObj = clean_names(triple.object)
         pred = triple.predicate
@@ -90,9 +119,13 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
             sentence = singleTemplates[pred].replace('SUBJ', cleanSubj)
             sentence = sentence.replace('OBJ', cleanObj)
             sentence = clean_sentence(sentence)
-            print('Generated sentence: ' +sentence)
+            #print('Generated sentence: ' +sentence)
         else:
+            notFound.append(pred)
+            sentence = generate_rule_based_sentence(triple)
+            print(sentence)
             print("No sentence with such predicate in the training corpus")
+    return notFound
 
 # Read training corpus:
 with open('corpus.pkl', 'rb') as F:
@@ -106,4 +139,6 @@ templates, singleTemplates = generate_templates(corpus)
 
 # Generate sentences from test triples (choose whether you want all sentences or only the most frequent one):
 #fill_in_all_templates(templates, devcorpus)
-fill_in_most_frequent_template(singleTemplates, devcorpus)
+notFound = fill_in_most_frequent_template(singleTemplates, devcorpus)
+print("Not found: ")
+print(notFound)
