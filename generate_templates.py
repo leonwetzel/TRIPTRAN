@@ -96,7 +96,7 @@ def generate_templates(traincorpus):
     # Remove duplicates from templates:
     for pred in templates:
         templates[pred] = list(set(templates[pred]))
-    return templates, singleTemplates
+    return singleTemplates
 
 def fill_in_all_templates(templates, testcorpus):
     '''Reads the triples from a testcorpus and generates multiple sentences from them using all templates'''
@@ -119,28 +119,32 @@ def fill_in_all_templates(templates, testcorpus):
 def fill_in_most_frequent_template(singleTemplates, testcorpus):
     '''Reads the triples from a testcorpus and generates one sentence for each triple, from the most frequent template in the training sentences'''
     notFound = []
+    list_of_references = []
+    hypotheses = []
     for triple in testcorpus: # Read only first 10 triples (for developmental purposes)
         cleanSubj  = clean_names(triple.subject)
         cleanObj = clean_names(triple.object)
         pred = triple.predicate
-        print(triple)
+        # print(triple)
+        list_of_references.append(triple.lexical_examples)
         # Test whether there is a template for the current predicate:
         if pred in singleTemplates: 
             # Fill in the subject and object of the triple in the template sentence:
             sentence = singleTemplates[pred].replace('SUBJ', cleanSubj)
             sentence = sentence.replace('OBJ', cleanObj)
             sentence = clean_sentence(sentence)
-            print('Generated sentence: ' +sentence)
-            print('Original sentences: ')
-            print(triple.lexical_examples)
+            # print('Generated sentence: ' +sentence)
+            # print('Original sentences: ')
+            # print(triple.lexical_examples)
         else:
             notFound.append(pred)
             sentence = generate_rule_based_sentence(triple)
-            print('Generated sentence: ' + sentence)
-            print('Original sentences: ')
-            print(triple.lexical_examples)
+            # print('Generated sentence: ' + sentence)
+            # print('Original sentences: ')
+            # print(triple.lexical_examples)
             #print("No sentence with such predicate in the training corpus")
-    return notFound
+        hypotheses.append(sentence)
+    return list_of_references, hypotheses
 
 # Read training corpus:
 with open('corpus.pkl', 'rb') as F:
@@ -150,10 +154,10 @@ with open('devcorpus.pkl', 'rb') as F:
     devcorpus = pickle.load(F)
     
 # Generate templates:
-templates, singleTemplates = generate_templates(corpus)
+singleTemplates = generate_templates(corpus)
 
 # Generate sentences from test triples (choose whether you want all sentences or only the most frequent one):
 #fill_in_all_templates(templates, devcorpus)
-notFound = fill_in_most_frequent_template(singleTemplates, devcorpus)
-print("Generated with rules: ")
-print(notFound)
+list_of_references, hypotheses = fill_in_most_frequent_template(singleTemplates, devcorpus)
+print(list_of_references)
+print(hypotheses)

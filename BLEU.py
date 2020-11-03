@@ -6,6 +6,7 @@ import nltk
 
 from datamanager import load_corpus
 from nltk.translate.bleu_score import sentence_bleu, corpus_bleu
+from generate_templates import fill_in_all_templates, generate_templates
 
 """"Input: targetsentence: string
     Input: referencesentences: list of strings
@@ -80,7 +81,6 @@ def main():
     print("The macro average blue score:", macroBleu(list_of_references, hypotheses))
 
     print("Bleu scores: ", overallBleuScore(list_of_references, hypotheses))
-
 
 if __name__ == '__main__':
     main()
