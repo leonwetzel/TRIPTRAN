@@ -24,7 +24,7 @@ def verb_rule(triple):
         sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" "  + clean_names(triple.object)
     else: 
         # If the object is a date, use a different template:
-        sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" on "  + clean_names(triple.object)
+        sentence = clean_names(triple.subject) +  " was " +  clean_predicate(triple.predicate)[0] +" on "  + clean_names(triple.object)
     sentence = " ".join(sentence.split())
     return sentence
 
@@ -37,6 +37,9 @@ def generate_rule_based_sentence(triple):
         sentence = verb_rule(triple)
     else: 
         sentence = '...'
+    print(triple)
+    print(triple.lexical_examples)
+    print(sentence)
     return sentence
 
 def clean_names(name):
