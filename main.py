@@ -43,7 +43,7 @@ def main():
     print("Calculating BLEU score...")
     print(overallBleuScore(list_of_references, hypotheses))
     print("Calculating Grammar scores...")
-    print(averageGrammarScore(hypotheses))
+    print("Grammar mistakes (avg, total): ", averageGrammarScore(hypotheses))
 
 
 if __name__ == '__main__':
