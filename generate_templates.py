@@ -148,19 +148,3 @@ def fill_in_most_frequent_template(singleTemplates, testcorpus):
             #print("No sentence with such predicate in the training corpus")
         hypotheses.append(sentence)
     return list_of_references, hypotheses
-
-# Read training corpus:
-with open('corpus.pkl', 'rb') as F:
-    corpus = pickle.load(F)
-# Read test corpus:
-with open('devcorpus.pkl', 'rb') as F:
-    devcorpus = pickle.load(F)
-    
-# Generate templates:
-singleTemplates = generate_templates(corpus)
-
-# Generate sentences from test triples (choose whether you want all sentences or only the most frequent one):
-#fill_in_all_templates(templates, devcorpus)
-list_of_references, hypotheses = fill_in_most_frequent_template(singleTemplates, devcorpus)
-print(list_of_references)
-print(hypotheses)
