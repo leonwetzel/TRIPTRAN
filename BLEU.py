@@ -17,6 +17,11 @@ def singleBleu(referenceSents, targetSent):
     reference = [sent.lower().split() for sent in referenceSents]
     candidate = targetSent.lower().split()
     score = sentence_bleu(reference, candidate)
+    if score < 0.52:
+        print("Low score("+ str(score)+"): ")
+        print("referencesents: ")
+        print(referenceSents)
+        print("targetSent: " + targetSent)
 
     return score
 
