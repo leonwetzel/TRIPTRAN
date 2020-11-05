@@ -103,7 +103,7 @@ if __name__ == '__main__':
     print(get_pos_tag(["is", "part", "of"]))
     print(get_pos_tag(["affiliated"]))
     print(get_pos_tag(["current", "tennants"]))
+    print()
 
-    sample = "2020-02-21"
-
-    print(dateparser.parse(sample))
+    print(dateparser.parse("2020-02-21"))
+    print(dateparser.parse("Cheese is nice"))
