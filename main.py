@@ -14,8 +14,8 @@ DEVCORPUS_PICKLE = "devcorpus.pkl"
 
 def main():
     """
-    Read XML files and store relevant information.
-    :return:
+    This script converts the downloaded WebNLG data
+    and generates sentences from the indicated triples.
     """
     try:
         nltk.data.find('corpora/wordnet')
@@ -35,7 +35,9 @@ def main():
     templates = generate_templates(corpus)
     # Generate output
     print("Generating output...")
-    list_of_references, hypotheses = fill_in_most_frequent_template(templates, devcorpus)
+    list_of_references, hypotheses = fill_in_most_frequent_template(
+        templates, devcorpus
+    )
     # Calculate BLEU score
     print("Calculating BLEU score...")
     print(overallBleuScore(list_of_references, hypotheses))
