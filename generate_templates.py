@@ -36,9 +36,9 @@ def generate_rule_based_sentence(triple):
         sentence = verb_rule(triple)
     else: 
         sentence = '...'
-    print(triple)
-    print(triple.lexical_examples)
-    print(sentence)
+    # print(triple)
+    # print(triple.lexical_examples)
+    # print(sentence)
     return sentence
 
 def clean_names(name):
@@ -106,7 +106,7 @@ def fill_in_all_templates(templates, testcorpus):
         cleanSubj  = clean_names(triple.subject)
         cleanObj = clean_names(triple.object)
         pred = triple.predicate
-        print(triple)
+        # print(triple)
         # Test whether there is a template for the current predicate:
         if pred in templates: 
             # For all example sentences of this predicate, fill in the subject and object of the triple in the template:
@@ -114,9 +114,9 @@ def fill_in_all_templates(templates, testcorpus):
                 sentence = lexical_example.replace('SUBJ', cleanSubj)
                 sentence = sentence.replace('OBJ', cleanObj)
                 sentence = clean_sentence(sentence)
-                print('Generated sentence: ' +sentence)
-        else:
-            print("No sentence with such predicate in the training corpus")
+                # print('Generated sentence: ' +sentence)
+        # else:
+        #    print("No sentence with such predicate in the training corpus")
 
 def fill_in_most_frequent_template(singleTemplates, testcorpus):
     '''Reads the triples from a testcorpus and generates one sentence for each triple, from the most frequent template in the training sentences'''
