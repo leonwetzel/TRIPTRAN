@@ -4,7 +4,8 @@ import nltk
 from datamanager import load_corpus
 from generate_templates import generate_templates,\
     fill_in_most_frequent_template
-from BLEU import overallBleuScore
+from BLEU import overallBleuScore, averageGrammarScore
+
 
 
 DATA_DIR = "data"
@@ -41,6 +42,8 @@ def main():
     # Calculate BLEU score
     print("Calculating BLEU score...")
     print(overallBleuScore(list_of_references, hypotheses))
+    print("Calculating Grammar scores...")
+    print(averageGrammarScore(hypotheses))
 
 
 if __name__ == '__main__':
