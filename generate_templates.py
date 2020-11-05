@@ -14,16 +14,16 @@ def clean_predicate(pred):
     return predicate, predicateList
 
 def noun_rule(triple):
-    sentence = "The " + clean_predicate(triple.predicate)[0] + " of " + clean_names(triple.subject) + " is " + clean_names(triple.object)
+    sentence = "The " + clean_predicate(triple.predicate)[0] + " of " + clean_names(triple.subject) + " is " + clean_names(triple.object) +"."
     sentence = " ".join(sentence.split())
     return sentence
 
 def verb_rule(triple):
     if dateparser.parse(triple.object) == None:
-        sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" "  + clean_names(triple.object)
+        sentence = clean_names(triple.subject) +  " is " +  clean_predicate(triple.predicate)[0] +" "  + clean_names(triple.object)+ "."
     else: 
         # If the object is a date, use a different template:
-        sentence = clean_names(triple.subject) +  " was " +  clean_predicate(triple.predicate)[0] +" on "  + clean_names(triple.object)
+        sentence = clean_names(triple.subject) +  " was " +  clean_predicate(triple.predicate)[0] +" on "  + clean_names(triple.object) + "."
     sentence = " ".join(sentence.split())
     return sentence
 
@@ -36,9 +36,6 @@ def generate_rule_based_sentence(triple):
         sentence = verb_rule(triple)
     else: 
         sentence = '...'
-    # print(triple)
-    # print(triple.lexical_examples)
-    # print(sentence)
     return sentence
 
 def clean_names(name):
@@ -51,6 +48,8 @@ def clean_names(name):
 def clean_sentence(sentence):
     # If there is a space in front of a dot, remove it:
     sentence = sentence.replace(" .", ".")
+    # If there is a space in front of a 's, remove it:
+    sentence = sentence.replace(" 's", "'s")
     # TODO: In de output kijken of er nog meer nodig is.
     return sentence
 
@@ -102,7 +101,7 @@ def generate_templates(traincorpus):
 
 def fill_in_all_templates(templates, testcorpus):
     '''Reads the triples from a testcorpus and generates multiple sentences from them using all templates'''
-    for triple in testcorpus[:10]: # Read only first 10 triples (for developmental purposes)
+    for triple in testcorpus: # Read only first 10 triples (for developmental purposes)
         cleanSubj  = clean_names(triple.subject)
         cleanObj = clean_names(triple.object)
         pred = triple.predicate

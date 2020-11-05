@@ -3,11 +3,26 @@ import os
 import pickle
 import xml.etree.ElementTree as ET
 import nltk
+import language_check
 
 from datamanager import load_corpus
 from nltk.translate.bleu_score import sentence_bleu, corpus_bleu
 from nltk.translate.meteor_score import meteor_score
 from generate_templates import fill_in_all_templates, generate_templates
+
+tool = language_check.LanguageTool("en-US")
+
+def singleSentCheck(sent):
+    mistakes = tool.check(sent)
+    return (len(mistakes))
+
+""""Input: two lists of lists with sentences in string format 
+    Process: loop trough the two lists and calculate the number of grammar mistakes for each item and add that to a list
+    Return: The avg and total grammar mistakes"""
+
+def averageGrammarScore(generatedSentences):
+    scores = [singleSentCheck(generatedSent) for generatedSent in generatedSentences]
+    return sum(scores) / len(scores), sum(scores)
 
 """"Input: targetsentence: string
     Input: referencesentences: list of strings
@@ -18,8 +33,15 @@ def singleBleu(referenceSents, targetSent):
     reference = [sent.lower().split() for sent in referenceSents]
     candidate = targetSent.lower().split()
     score = sentence_bleu(reference, candidate)
+    if score < 0.52:
+        print("Low score("+ str(score)+"): ")
+        print("referencesents: ")
+        print(referenceSents)
+        print("targetSent: " + targetSent)
 
     return score
+
+    print("Grammar scores (avg and total) :", averageGrammarScore(hypotheses))
 
 
 """"Input: two lists of lists with sentences in string format 
@@ -28,9 +50,6 @@ def singleBleu(referenceSents, targetSent):
 def macroBleu(referenceSentences, generatedSentences):
     scores = [singleBleu(refSents, generatedSent) for refSents, generatedSent in zip(referenceSentences, generatedSentences)]
     return sum(scores) / len(scores)
-
-
-
 
 """Input: two lists of lists with sentences in string format 
         listOfReferencesSentences = [[ref1a, ref1b, ref1c], [ref2a]]
