@@ -6,6 +6,7 @@ import nltk
 
 from datamanager import load_corpus
 from nltk.translate.bleu_score import sentence_bleu, corpus_bleu
+from nltk.translate.meteor_score import meteor_score
 from generate_templates import fill_in_all_templates, generate_templates
 
 """"Input: targetsentence: string
@@ -60,6 +61,10 @@ def overallBleuScore(referenceSentences, generatedSentences):
     return "The corpus Bleu score: ", corpusBleu(referenceSentences, generatedSentences), \
            "The macro average blue score:", macroBleu(referenceSentences, generatedSentences)
 
+
+def calculate_meteor_scores(references, hypothesis):
+    """Calculates the METEOR scores"""
+    return meteor_score(references, hypothesis)
 
 
 def main():
