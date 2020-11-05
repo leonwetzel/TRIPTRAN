@@ -3,10 +3,25 @@ import os
 import pickle
 import xml.etree.ElementTree as ET
 import nltk
+import language_check
 
 from datamanager import load_corpus
 from nltk.translate.bleu_score import sentence_bleu, corpus_bleu
 from generate_templates import fill_in_all_templates, generate_templates
+
+tool = language_check.LanguageTool("en-US")
+
+def singleSentCheck(sent):
+    mistakes = tool.check(sent)
+    return (len(mistakes))
+
+""""Input: two lists of lists with sentences in string format 
+    Process: loop trough the two lists and calculate the number of grammar mistakes for each item and add that to a list
+    Return: The avg and total grammar mistakes"""
+
+def averageGrammarScore(generatedSentences):
+    scores = [singleSentCheck(generatedSent) for generatedSent in generatedSentences]
+    return sum(scores) / len(scores), sum(scores)
 
 """"Input: targetsentence: string
     Input: referencesentences: list of strings
@@ -20,6 +35,8 @@ def singleBleu(referenceSents, targetSent):
 
     return score
 
+    print("Grammar scores (avg and total) :", averageGrammarScore(hypotheses))
+
 
 """"Input: two lists of lists with sentences in string format 
     Process: loop trough the two lists and calculate a bleu score for each item and add that to a list
@@ -27,9 +44,6 @@ def singleBleu(referenceSents, targetSent):
 def macroBleu(referenceSentences, generatedSentences):
     scores = [singleBleu(refSents, generatedSent) for refSents, generatedSent in zip(referenceSentences, generatedSentences)]
     return sum(scores) / len(scores)
-
-
-
 
 """Input: two lists of lists with sentences in string format 
         listOfReferencesSentences = [[ref1a, ref1b, ref1c], [ref2a]]
@@ -59,8 +73,6 @@ def overallBleuScore(referenceSentences, generatedSentences):
 
     return "The corpus Bleu score: ", corpusBleu(referenceSentences, generatedSentences), \
            "The macro average blue score:", macroBleu(referenceSentences, generatedSentences)
-
-
 
 def main():
     """
