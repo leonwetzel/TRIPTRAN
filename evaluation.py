@@ -14,7 +14,7 @@ def check_sentence(sentence):
     :return:
     """
     mistakes = language_tool.check(sentence)
-    return (len(mistakes))
+    return len(mistakes)
 
 
 def average_grammar_score(generated_sentences):
@@ -39,7 +39,7 @@ def single_bleu_score(references, target_sentences):
     :param target_sentences: list of strings
     :return: BLEU score for 1 sentence
     """
-    reference = [sent.lower().split() for sent in references]
+    reference = [sentence.lower().split() for sentence in references]
     candidate = target_sentences.lower().split()
     score = sentence_bleu(reference, candidate)
     if score < 0.52:
@@ -60,8 +60,7 @@ def macro_bleu_score(references, generated_sentences):
     :return: The avarage bleu score
     """
     scores = [single_bleu_score(reference_sentences, generated_sentence)
-              for
-              reference_sentences, generated_sentence in
+              for reference_sentences, generated_sentence in
               zip(references, generated_sentences)]
     return sum(scores) / len(scores)
 
@@ -106,7 +105,7 @@ def calculate_meteor_scores(references, hypothesis):
 
 if __name__ == '__main__':
     generated = "Hello world, we generated this sentence from a triple"
-    targetsSentences = [
+    target_sentences = [
         "An other sentence generated from a triple",
         "Hello world, this is the second we generated this"
         " sentence from a triple"]
@@ -126,7 +125,7 @@ if __name__ == '__main__':
         " world history"]
 
     print("The BLEU score of a single sentence: ",
-          single_bleu_score(targetsSentences, generated))
+          single_bleu_score(target_sentences, generated))
     print("The corpus BLEU score: ",
           corpus_bleu_score(list_of_references, hypotheses))
     print("The macro average BLEU score:",

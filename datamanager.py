@@ -54,7 +54,8 @@ def download():
 
 
 def get_members(zip):
-    """ Extracts the files from a given zip file. Stolen from\
+    """Extracts the files from a given zip file.
+     Stolen from\
      https://stackoverflow.com/questions/8689938/extract-files-from-zip-without-keep-the-top-level-folder-with-python-zipfile
 
     Parameters
