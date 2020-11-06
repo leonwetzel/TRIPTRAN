@@ -46,7 +46,8 @@ def download():
         file.write(response.content)
 
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
-            zip_ref.extractall(path='data', members=get_members(zip_ref))
+            zip_ref.extractall(path='data',
+                               members=get_members(zip_ref))
 
         file.close()
         os.remove(file_name)
@@ -113,7 +114,8 @@ def extract_information(file):
     return subcorpus
 
 
-def load_corpus(data_directory, pickle_name, type='train', suffix='challenge',
+def load_corpus(data_directory, pickle_name, type='train',
+                suffix='challenge',
                 triple_size=1):
     """ Loads the WebNLG corpus into or from a pickle.
 
@@ -141,8 +143,8 @@ def load_corpus(data_directory, pickle_name, type='train', suffix='challenge',
                 filepath = subdir + os.sep + filename
 
                 if filepath.startswith(rf"data\{type}") \
-                        and filepath.endswith(
-                    f"{suffix}.xml") and f"{triple_size}triples" in filepath:
+                        and filepath.endswith(f"{suffix}.xml") and\
+                        f"{triple_size}triples" in filepath:
                     corpus.extend(extract_information(filepath))
 
         with open(pickle_name, 'wb') as F:
