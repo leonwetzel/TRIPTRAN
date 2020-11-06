@@ -1,84 +1,102 @@
 #!/usr/bin/env python3
-import os
-import pickle
-import xml.etree.ElementTree as ET
-import nltk
 import language_check
 
-from datamanager import load_corpus
 from nltk.translate.bleu_score import sentence_bleu, corpus_bleu
 from nltk.translate.meteor_score import meteor_score
-from generate_templates import fill_in_all_templates, generate_templates
 
-tool = language_check.LanguageTool("en-US")
+language_tool = language_check.LanguageTool("en-US")
 
-def singleSentCheck(sent):
-    mistakes = tool.check(sent)
+
+def check_sentence(sentence):
+    """
+
+    :param sentence:
+    :return:
+    """
+    mistakes = language_tool.check(sentence)
     return (len(mistakes))
 
-""""Input: two lists of lists with sentences in string format 
-    Process: loop trough the two lists and calculate the number of grammar mistakes for each item and add that to a list
-    Return: The avg and total grammar mistakes"""
 
-def averageGrammarScore(generatedSentences):
-    scores = [singleSentCheck(generatedSent) for generatedSent in generatedSentences]
+def average_grammar_score(generated_sentences):
+    """
+    Loop trough the two lists and calculate the number of grammar
+    mistakes for each item and add that to a list
+    :param generated_sentences: two lists of lists with sentences
+                                in string format
+    :return: The avg and total grammar mistakes
+    """
+    scores = [check_sentence(sentence) for sentence in
+              generated_sentences]
     return sum(scores) / len(scores), sum(scores)
 
-""""Input: targetsentence: string
-    Input: referencesentences: list of strings
-    Process: Split the sentences into a list of words
+
+def single_bleu_score(references, target_sentences):
+    """
+    Split the sentences into a list of words
     Calculate the BLEU score
-    Output: BLEU score for 1 sentence"""
-def singleBleu(referenceSents, targetSent):
-    reference = [sent.lower().split() for sent in referenceSents]
-    candidate = targetSent.lower().split()
+    
+    :param references: string
+    :param target_sentences: list of strings
+    :return: BLEU score for 1 sentence
+    """
+    reference = [sent.lower().split() for sent in references]
+    candidate = target_sentences.lower().split()
     score = sentence_bleu(reference, candidate)
     if score < 0.52:
-        print("Low score("+ str(score)+"): ")
-        print("referencesents: ")
-        print(referenceSents)
-        print("targetSent: " + targetSent)
+        print("Low score(" + str(score) + "): ")
+        print("Reference sentences: ")
+        print(references)
+        print("Target sentences: " + target_sentences)
 
     return score
 
-    print("Grammar scores (avg and total) :", averageGrammarScore(hypotheses))
 
-
-""""Input: two lists of lists with sentences in string format 
-    Process: loop trough the two lists and calculate a bleu score for each item and add that to a list
-    Return: The avarage bleu score"""
-def macroBleu(referenceSentences, generatedSentences):
-    scores = [singleBleu(refSents, generatedSent) for refSents, generatedSent in zip(referenceSentences, generatedSentences)]
+def macro_bleu_score(references, generated_sentences):
+    """
+    Loop trough the two lists and calculate a bleu score for each item
+    and add that to a list
+    :param references:
+    :param generated_sentences:
+    :return: The avarage bleu score
+    """
+    scores = [single_bleu_score(reference_sentences, generated_sentence)
+              for
+              reference_sentences, generated_sentence in
+              zip(references, generated_sentences)]
     return sum(scores) / len(scores)
 
-"""Input: two lists of lists with sentences in string format 
-        listOfReferencesSentences = [[ref1a, ref1b, ref1c], [ref2a]]
-        listOfGenratedSenteces = [hyp1, hyp2]
-        Process: lower and split() the sentences 
-        Calculate the corpus Bleu score
-        Note: This is different from the (macro) average bleu score!! 
-        http://www.nltk.org/api/nltk.translate.html#nltk.translate.bleu_score.corpus_bleu 
-        Output: Blue score corpus
-"""
-def corpusBleu(referenceSentences, generatedSentences):
 
-    generatedSentences = [sent.lower().split() for sent in generatedSentences]
-    referenceSentences = [[sent.lower().split() for sent in ref] for ref in referenceSentences]
-    score = corpus_bleu(referenceSentences, generatedSentences)
+def corpus_bleu_score(reference_sentences, generated_sentences):
+    """
+    Lower and split() the sentences
+    Calculate the corpus Bleu score
+    Note: This is different from the (macro) average bleu score!!
+    http://www.nltk.org/api/nltk.translate.html#nltk.translate.bleu_score.corpus_bleu
+    :param reference_sentences: [[ref1a, ref1b, ref1c], [ref2a]]
+    :param generated_sentences: [hyp1, hyp2]
+    :return: BLEU score for corpus
+    """
+    generated_sentences = [sentence.lower().split() for sentence in
+                           generated_sentences]
+    reference_sentences = [
+        [sentence.lower().split() for sentence in reference] for
+        reference
+        in reference_sentences]
+    return corpus_bleu(reference_sentences, generated_sentences)
 
-    return score
 
-"""Input: two lists of lists with sentences in string format 
-        listOfReferencesSentences = [[ref1a, ref1b, ref1c], [ref2a]]
-        listOfGenratedSenteces = [hyp1, hyp2]
-        Process: lower and split() the sentences in different functions
-        Calculate the corpus Bleu score
-        Return: the corpus and macro bleu score"""
-
-def overallBleuScore(referenceSentences, generatedSentences):
-
-    return "The corpus Bleu score: ", corpusBleu(referenceSentences, generatedSentences), \
-           "The macro average blue score:", macroBleu(referenceSentences, generatedSentences)
+def overall_bleu_score(reference_sentences, generated_sentences):
+    """
+    Lower and split() the sentences in different functions
+    Calculate the corpus Bleu score
+    :param reference_sentences: [[ref1a, ref1b, ref1c], [ref2a]]
+    :param generated_sentences: [hyp1, hyp2]
+    :return: The corpus and macro bleu score
+    """
+    return "Corpus BLEU score: ", \
+           corpus_bleu_score(reference_sentences, generated_sentences), \
+           "Macro average BLEU score:", \
+           macro_bleu_score(reference_sentences, generated_sentences)
 
 
 def calculate_meteor_scores(references, hypothesis):
@@ -86,25 +104,33 @@ def calculate_meteor_scores(references, hypothesis):
     return meteor_score(references, hypothesis)
 
 
-def main():
-    """
-    Test the bleu functions
-    """
-    generated = "Hello world, we generated this sentence from a triple"
-    targetsSentences = ["An other sentence generated from a triple",
-                       "Hello world, this is the second we generated this sentence from a triple"]
-    list_of_references = [["It is a guide to action which ensures that the military always obeys the command of the party",
-                           "It is a guide to action which ensures that the military will forever heed Partyu commands",
-                           "It is the practical guide for the army always to heed the directions of the party"],
-                          ["He was interested in the world history because he read the book"]]
-    hypotheses = ["It is a guide, which ensures that the military always obeys the command of the party",
-                  "He read the book because he was interested in the world history"]
-
-    print("The Bleu score of a single sentence: ",singleBleu(targetsSentences, generated))
-    print("The corpus Bleu score: ", corpusBleu(list_of_references, hypotheses))
-    print("The macro average blue score:", macroBleu(list_of_references, hypotheses))
-
-    print("Bleu scores: ", overallBleuScore(list_of_references, hypotheses))
-
 if __name__ == '__main__':
-    main()
+    generated = "Hello world, we generated this sentence from a triple"
+    targetsSentences = [
+        "An other sentence generated from a triple",
+        "Hello world, this is the second we generated this"
+        " sentence from a triple"]
+    list_of_references = [[
+        "It is a guide to action which ensures that the military"
+        " always obeys the command of the party",
+        "It is a guide to action which ensures that the military will"
+        " forever heed Partyu commands",
+        "It is the practical guide for the army always to heed the"
+        " directions of the party"],
+        ["He was interested in the world history because he read"
+         " the book"]]
+    hypotheses = [
+        "It is a guide, which ensures that the military always obeys"
+        " the command of the party",
+        "He read the book because he was interested in the"
+        " world history"]
+
+    print("The BLEU score of a single sentence: ",
+          single_bleu_score(targetsSentences, generated))
+    print("The corpus BLEU score: ",
+          corpus_bleu_score(list_of_references, hypotheses))
+    print("The macro average BLEU score:",
+          macro_bleu_score(list_of_references, hypotheses))
+
+    print("BLEU scores: ",
+          overall_bleu_score(list_of_references, hypotheses))

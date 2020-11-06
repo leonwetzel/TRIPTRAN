@@ -131,6 +131,8 @@ dmypy.json
 data
 .idea
 
+baseline/data
+
 *.lex
 *.triple
 
