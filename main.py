@@ -16,7 +16,6 @@ TRAIN_CORPUS_PICKLE = "corpus.pkl"
 DEVCORPUS_PICKLE = "devcorpus.pkl"
 TESTCORPUS_PICKLE = "testcorpus.pkl"
 
-
 def main():
     """
     This script converts the downloaded WebNLG data
@@ -32,11 +31,14 @@ def main():
     corpus = load_corpus(DATA_DIR, TRAIN_CORPUS_PICKLE, type='train',
                          suffix='challenge', triple_size=1)
 
+
     devcorpus = load_corpus(DATA_DIR, DEVCORPUS_PICKLE, type='dev',
                             suffix='challenge', triple_size=1)
 
     train_corpus = load_corpus(DATA_DIR, TESTCORPUS_PICKLE, type='test',
                                suffix='challenge', triple_size=1)
+
+    print(len(corpus))
 
     # Generate templates
     print("Generating templates...")

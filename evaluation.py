@@ -10,8 +10,8 @@ language_tool = language_check.LanguageTool("en-US")
 def check_sentence(sentence):
     """
 
-    :param sentence:
-    :return:
+    :param sentence: text sentence
+    :return: number of grammar mistakes in a sentence
     """
     mistakes = language_tool.check(sentence)
     return len(mistakes)
