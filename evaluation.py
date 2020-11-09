@@ -23,13 +23,6 @@ def single_bleu_score(references, target_sentence, verbose=False):
     candidate = target_sentence.lower().split()
     score = sentence_bleu(reference, candidate)
 
-    if verbose:
-        if score < 0.52:
-            print("Low score(" + str(score) + "): ")
-            print("Reference sentences: ")
-            print(references)
-            print("Target sentences: " + target_sentence)
-
     return score
 
 
