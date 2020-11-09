@@ -58,8 +58,9 @@ def main():
                                             metric='meteor'))
 
     avg_mistakes, sum_mistakes = average_grammar_score(hypotheses)
-    print("Average amount of mistakes", avg_mistakes)
-    print("Total amount of mistakes:", sum_mistakes)
+    print("Average amount of grammar mistakes", avg_mistakes)
+    print("Total amount of grammar mistakes:", sum_mistakes)
+    print("Total amout of sentences", len(hypotheses))
 
 
 if __name__ == '__main__':
