@@ -7,10 +7,10 @@ def prepare_files_ter(inputdir):
     :param inputdir: directory with bleu files
     :return:
     """
-    references = []  # each element is a list of references
+    references = []  # each element is a list of reference
     pure_references = []
     initialref = inputdir + 'all-notdelex-reference0.lex'
-    # complete refs with references for all sents
+    # complete refs with reference for all sents
     with open(initialref, 'r') as f:
         for i, line in enumerate(f):
             references.append([line.strip() + ' (id' + str(i) + ')\n'])
@@ -34,19 +34,19 @@ def prepare_files_ter(inputdir):
         for ref in references:
             f.write(''.join(ref))
 
-    # prepare generated hypotheses
+    # prepare generated hypothesis
     with open('relexicalised_predictions.txt', 'r') as f:
         geners = [line.strip() + ' (id' + str(i) + ')\n' for i, line in enumerate(f)]
     with open('relexicalised_predictions-ter.txt', 'w+') as f:
         f.write(''.join(geners))
 
     # data for meteor
-    # For N references, it is assumed that the reference file will be N times the length of the test file,
-    # containing sets of N references in order.
+    # For N reference, it is assumed that the reference file will be N times the length of the test file,
+    # containing sets of N reference in order.
     # For example, if N=4, reference lines 1-4 will correspond to test line 1, 5-8 to line 2, etc.
     with open('all-notdelex-refs-meteor.txt', 'w+') as f:
         for ref in pure_references:
-            empty_lines = 8 - len(ref)  # calculate how many empty lines to add (8 max references)
+            empty_lines = 8 - len(ref)  # calculate how many empty lines to add (8 max reference)
             f.write(''.join(ref))
             if empty_lines > 0:
                 f.write('\n' * empty_lines)

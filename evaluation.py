@@ -87,21 +87,6 @@ def corpus_bleu_score(reference_sentences, generated_sentences):
                        smoothing_function=None)
 
 
-def overall_bleu_score(reference_sentences, generated_sentences):
-    """
-    Lower and split() the sentences in different functions
-    Calculate the corpus Bleu score
-    :param reference_sentences: [[ref1a, ref1b, ref1c], [ref2a]]
-    :param generated_sentences: [hyp1, hyp2]
-    :return: The corpus and macro bleu score
-    """
-    return "Corpus BLEU score: ", \
-           corpus_bleu_score(reference_sentences, generated_sentences), \
-           "Macro average BLEU score:", \
-           macro_score(reference_sentences, generated_sentences,
-                       metric='bleu')
-
-
 def single_meteor_score(references, hypothesis):
     """Calculates the METEOR scores
 
@@ -120,27 +105,25 @@ def single_meteor_score(references, hypothesis):
     return meteor_score(references, hypothesis)
 
 
-def wer_score(hypotheses, references, print_matrix=False):
-    """Calculate the Word Error Rate (WER) score.
+def word_error_rate(hypothesis, reference):
+    """Calculate the Word Error Rate (WER).
 
     Stolen from https://github.com/gcunhase/NLPMetrics/blob/master/notebooks/wer.ipynb.
 
     Parameters
     ----------
-    hypotheses : iterable
-        List containing the hypotheses.
-    references : iterable
-        List containing the reference sentences.
-    print_matrix : bool
-        Indicates if a result matrix should be printed or not
+    hypothesis : iterable
+        List containing the tokenized hypothesis.
+    reference : iterable
+        List containing the tokenized reference sentence.
 
     Returns
     -------
     word_error_score : int
-        The Word Error Rate (WER) score of a given list of sentences
+        The Word Error Rate (WER) score of a given list of tokens
     """
-    N = len(hypotheses)
-    M = len(references)
+    N = len(hypothesis)
+    M = len(reference)
     L = np.zeros((N, M))
     for i in range(0, N):
         for j in range(0, M):
@@ -149,16 +132,13 @@ def wer_score(hypotheses, references, print_matrix=False):
             else:
                 deletion = L[i - 1, j] + 1
                 insertion = L[i, j - 1] + 1
-                sub = 1 if hypotheses[i] != references[j] else 0
+                sub = 1 if hypothesis[i] != reference[j] else 0
                 substitution = L[i - 1, j - 1] + sub
                 L[i, j] = min(deletion, min(insertion, substitution))
                 # print("{} - {}: del {} ins {} sub {} s {}".format(
-                #     hypotheses[i], references[j], deletion, insertion, substitution,
+                #     hypothesis[i], reference[j], deletion, insertion, substitution,
                 #     sub)
                 # )
-    if print_matrix:
-        print("WER matrix ({}x{}): ".format(N, M))
-        print(L)
     return int(L[N - 1, M - 1])
 
 
@@ -193,7 +173,7 @@ def average_grammar_score(generated_sentences):
 #         " directions of the party"],
 #         ["He was interested in the world history because he read"
 #          " the book"]]
-#     hypotheses = [
+#     hypothesis = [
 #         "It is a guide, which ensures that the military always obeys"
 #         " the command of the party",
 #         "He read the book because he was interested in the"
@@ -204,11 +184,11 @@ def average_grammar_score(generated_sentences):
 #     print("The METEOR score of a single sentence: ",
 #           single_meteor_score(target_sentences, generated))
 #     print("The corpus BLEU score: ",
-#           corpus_bleu_score(list_of_references, hypotheses))
+#           corpus_bleu_score(list_of_references, hypothesis))
 #     print("The macro average BLEU score:",
-#           macro_score(list_of_references, hypotheses, metric='bleu'))
+#           macro_score(list_of_references, hypothesis, metric='bleu'))
 #     print("The macro average METEOR score: ",
-#           macro_score(list_of_references, hypotheses, metric='meteor'))
+#           macro_score(list_of_references, hypothesis, metric='meteor'))
 #
 #     print("BLEU scores: ",
-#           overall_bleu_score(list_of_references, hypotheses))
+#           overall_bleu_score(list_of_references, hypothesis))

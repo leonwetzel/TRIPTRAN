@@ -2,8 +2,8 @@
 import nltk
 
 from datamanager import load_corpus
-from evaluation import macro_score, average_grammar_score,\
-    corpus_bleu_score
+from evaluation import macro_score, average_grammar_score, \
+    corpus_bleu_score, word_error_rate
 from generate_templates import generate_templates, \
     fill_in_most_frequent_template
 
@@ -41,20 +41,25 @@ def main():
     )
     print()
 
+    for references, hypothesis in zip(list_of_references, hypotheses):
+        print(references)
+        print(hypothesis)
+        print()
+
+    print()
+
     # Calculate BLEU score
     print("Corpus BLEU score", corpus_bleu_score(list_of_references,
-                                           hypotheses))
+                                                 hypotheses))
     print("Macro BLEU score", macro_score(list_of_references,
-                                           hypotheses, metric='bleu'))
+                                          hypotheses, metric='bleu'))
     print("Macro METEOR score", macro_score(list_of_references,
-                                              hypotheses,
-                                              metric='meteor'))
+                                            hypotheses,
+                                            metric='meteor'))
 
     avg_mistakes, sum_mistakes = average_grammar_score(hypotheses)
     print("Average amount of mistakes", avg_mistakes)
     print("Total amount of mistakes:", sum_mistakes)
-
-    print()
 
 
 if __name__ == '__main__':

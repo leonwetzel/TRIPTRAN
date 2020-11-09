@@ -121,7 +121,7 @@ def create_source_target(b, options, dataset, delex=True):
     with open(dataset + '-webnlg-' + options + '.lex', 'w+', encoding='utf-8') as f:
         f.write('\n'.join(target_out))
 
-    # create separate files with references for multi-bleu.pl for dev set
+    # create separate files with reference for multi-bleu.pl for dev set
     scr_refs = defaultdict(list)
     if dataset == 'dev' and not delex:
         for src, trg in zip(source_out, target_out):
@@ -133,7 +133,7 @@ def create_source_target(b, options, dataset, delex=True):
         # write the source file not delex
         with open(options + '-source.triple', 'w+', encoding='utf-8') as f:
             f.write('\n'.join(keys))
-        # write references files
+        # write reference files
         for j in range(0, len(max_refs)):
             with open(options + '-reference' + str(j) + '.lex', 'w+', encoding='utf-8') as f:
                 out = ''

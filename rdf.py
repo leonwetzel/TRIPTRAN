@@ -18,10 +18,12 @@ class Triple:
             self.predicate = args[1]
             self.object = args[2]
             self.lexical_examples = []
+            self.theme = None
         elif isinstance(args[0], str):
             # input originates from XML file
             self.subject, self.predicate, self.object = args[0].split('|')
             self.lexical_examples = []
+            self.theme = None
 
     def add_lexical_example(self, example):
         """
@@ -41,6 +43,20 @@ class Triple:
         :return:
         """
         self.lexical_examples.remove(example)
+
+    def set_theme(self, theme):
+        """Set the theme for the triple
+
+        Parameters
+        ----------
+        theme : str
+            Theme related to the triple.
+
+        Returns
+        -------
+        None
+        """
+        self.theme = theme
 
     def __str__(self):
         """
