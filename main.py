@@ -2,19 +2,16 @@
 import nltk
 
 from datamanager import load_corpus
-from generate_templates import generate_templates,\
+from evaluation import macro_score, average_grammar_score,\
+    corpus_bleu_score
+from generate_templates import generate_templates, \
     fill_in_most_frequent_template
-from evaluation import overall_bleu_score, average_grammar_score,\
-    calculate_meteor_scores
-from generate_templates import generate_templates,\
-    fill_in_most_frequent_template
-from evaluation import overall_bleu_score
-
 
 DATA_DIR = "data"
 TRAIN_CORPUS_PICKLE = "corpus.pkl"
 DEVCORPUS_PICKLE = "devcorpus.pkl"
 TESTCORPUS_PICKLE = "testcorpus.pkl"
+
 
 def main():
     """
@@ -31,14 +28,8 @@ def main():
     corpus = load_corpus(DATA_DIR, TRAIN_CORPUS_PICKLE, type='train',
                          suffix='challenge', triple_size=1)
 
-
-    devcorpus = load_corpus(DATA_DIR, DEVCORPUS_PICKLE, type='dev',
-                            suffix='challenge', triple_size=1)
-
-    train_corpus = load_corpus(DATA_DIR, TESTCORPUS_PICKLE, type='test',
-                               suffix='challenge', triple_size=1)
-
-    print(len(corpus))
+    test_corpus = load_corpus(DATA_DIR, TESTCORPUS_PICKLE, type='test',
+                              suffix='release', triple_size=1)
 
     # Generate templates
     print("Generating templates...")
@@ -46,14 +37,22 @@ def main():
     # Generate output
     print("Generating output...")
     list_of_references, hypotheses = fill_in_most_frequent_template(
-        templates, devcorpus
+        templates, test_corpus
     )
+    print()
+
     # Calculate BLEU score
-    print("Calculating BLEU score...")
-    print(overall_bleu_score(list_of_references, hypotheses))
-    print("Calculating Grammar scores...")
-    print("Grammar mistakes (avg, total): ",
-          average_grammar_score(hypotheses))
+    print("Corpus BLEU score", corpus_bleu_score(list_of_references,
+                                           hypotheses))
+    print("Macro BLEU score", macro_score(list_of_references,
+                                           hypotheses, metric='bleu'))
+    print("Macro METEOR score", macro_score(list_of_references,
+                                              hypotheses,
+                                              metric='meteor'))
+
+    avg_mistakes, sum_mistakes = average_grammar_score(hypotheses)
+    print("Average amount of mistakes", avg_mistakes)
+    print("Total amount of mistakes:", sum_mistakes)
 
     print()
 
