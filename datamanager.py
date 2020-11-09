@@ -9,9 +9,9 @@ import xml.etree.ElementTree as ET
 from rdf import Triple
 
 URLS = [
-    {"year": 2017,
+    {"year": 2017, "suffix": "challenge",
      "url": "https://gitlab.com/shimorina/webnlg-dataset/-/archive/master/webnlg-dataset-master.zip?path=webnlg_challenge_2017"},
-    {"year": 2020,
+    {"year": 2020, "suffix": "release",
      "url": "https://gitlab.com/shimorina/webnlg-dataset/-/archive/master/webnlg-dataset-master.zip?path=release_v2.1/xml"}
 ]
 
@@ -137,7 +137,6 @@ def load_corpus(data_directory, pickle_name, type='train',
             Amount of triples per item
     """
     if not os.path.isfile(pickle_name):
-        print("Constructing pickle...")
         corpus = []
         for subdir, dirs, files in os.walk(f'{data_directory}'):
             for filename in files:
@@ -151,7 +150,6 @@ def load_corpus(data_directory, pickle_name, type='train',
         with open(pickle_name, 'wb') as F:
             pickle.dump(corpus, F)
     else:
-        print("Loading pickle...")
         with open(pickle_name, 'rb') as F:
             corpus = pickle.load(F)
 

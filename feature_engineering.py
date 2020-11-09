@@ -2,7 +2,9 @@ import nltk
 from nltk.corpus import wordnet as wn
 
 import dateparser
+import language_check
 
+language_tool = language_check.LanguageTool("en-US")
 
 # Just to make it a bit more readable
 WN_NOUN = 'n'
@@ -81,29 +83,54 @@ def get_pos_tag(tokens):
         A list of tokens, originating from a predicate.
     """
     pos_tags = []
-    if len(tokens) > 1:
-        pos_tags = [token[1] for token in nltk.pos_tag(tokens)]
-    elif len([tokens]) == 1:
+    if len(tokens) > 1 or len([tokens]) == 1:
         pos_tags = [token[1] for token in nltk.pos_tag(tokens)]
     return pos_tags
 
 
-if __name__ == '__main__':
-    print(convert('hurry', 'v', 'n'))
-    print(convert('destroy', 'v', 'n'))
-    print(convert('affiliation', 'n', 'v'))
-    print(convert('studying', 'v', 'n'))
-    print(convert('dinner', 'n', 'v'))
-    print(convert('eat', 'v', 'r'))
-    print()
+def count_linguistic_mistakes(sentence):
+    """
+    Counts the amount of linguistic mistakes
+    found by the language_check package.
+    :param sentence:
+    :return:
+    """
+    mistakes = language_tool.check(sentence)
+    return len(mistakes)
 
-    print(get_pos_tag(["cheese"]))
-    print(get_pos_tag(["hot", "dog"]))
-    print(get_pos_tag(["clock", "house"]))
-    print(get_pos_tag(["is", "part", "of"]))
-    print(get_pos_tag(["affiliated"]))
-    print(get_pos_tag(["current", "tennants"]))
-    print()
 
-    print(dateparser.parse("2020-02-21"))
-    print(dateparser.parse("Cheese is nice"))
+def preprocess(string):
+    """Lower and split a given string.
+
+    Parameters
+    ----------
+    string : str
+        The line of text that should be preprocessed.
+
+    Returns
+    -------
+    string: str
+        A preprocessed string.
+    """
+    return string.lower().split()
+
+
+# if __name__ == '__main__':
+#     print(convert('hurry', 'v', 'n'))
+#     print(convert('destroy', 'v', 'n'))
+#     print(convert('affiliation', 'n', 'v'))
+#     print(convert('studying', 'v', 'n'))
+#     print(convert('dinner', 'n', 'v'))
+#     print(convert('eat', 'v', 'r'))
+#     print()
+#
+#     print(get_pos_tag(["cheese"]))
+#     print(get_pos_tag(["hot", "dog"]))
+#     print(get_pos_tag(["clock", "house"]))
+#     print(get_pos_tag(["is", "part", "of"]))
+#     print(get_pos_tag(["affiliated"]))
+#     print(get_pos_tag(["current", "tennants"]))
+#     print()
+#
+#     print(dateparser.parse("2020-02-21"))
+#     print(dateparser.parse("Cheese is nice"))
