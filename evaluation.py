@@ -145,7 +145,7 @@ def average_grammar_score(generated_sentences):
     """
     scores = [count_linguistic_mistakes(sentence) for sentence in
               generated_sentences]
-    return sum(scores) / len(scores), sum(scores)
+    return sum(scores) / len(scores), sum(scores), scores.count(0)
 
 
 # if __name__ == '__main__':
