@@ -1,3 +1,5 @@
+import re
+
 import nltk
 from nltk.corpus import wordnet as wn
 
@@ -79,7 +81,7 @@ def get_pos_tag(tokens):
 
     Parameters
     ----------
-    tokens : list
+    tokens : iterable
         A list of tokens, originating from a predicate.
     """
     pos_tags = []
@@ -99,38 +101,64 @@ def count_linguistic_mistakes(sentence):
     return len(mistakes)
 
 
-def preprocess(string):
-    """Lower and split a given string.
+def clean_predicate(pred):
+    """Split the predicate by upper cases, make everything lower case
+    and convert to list
 
     Parameters
     ----------
-    string : str
-        The line of text that should be preprocessed.
+    pred
+        A predicate in its original form, originating
+        from the corpus.
 
     Returns
     -------
-    string: str
-        A preprocessed string.
+    predicate
+        Cleaned version of the predicate
+
+    predicate_parts
+        Separate parts of the original predicate
     """
-    return string.lower().split()
+    predicate = " ".join(pred.split())
+    predicate = re.sub(r'([A-Z])', r' \1', predicate)
+    predicate = predicate.lower()
+    # convert to a list:
+    predicate_parts = predicate.split(" ")
+    return predicate, predicate_parts
 
 
-# if __name__ == '__main__':
-#     print(convert('hurry', 'v', 'n'))
-#     print(convert('destroy', 'v', 'n'))
-#     print(convert('affiliation', 'n', 'v'))
-#     print(convert('studying', 'v', 'n'))
-#     print(convert('dinner', 'n', 'v'))
-#     print(convert('eat', 'v', 'r'))
-#     print()
-#
-#     print(get_pos_tag(["cheese"]))
-#     print(get_pos_tag(["hot", "dog"]))
-#     print(get_pos_tag(["clock", "house"]))
-#     print(get_pos_tag(["is", "part", "of"]))
-#     print(get_pos_tag(["affiliated"]))
-#     print(get_pos_tag(["current", "tennants"]))
-#     print()
-#
-#     print(dateparser.parse("2020-02-21"))
-#     print(dateparser.parse("Cheese is nice"))
+def clean_names(name):
+    """
+
+    Parameters
+    ----------
+    name
+
+    Returns
+    -------
+
+    """
+    # Replace underscores by spaces:
+    name = name.replace('_', ' ')
+    # Remove redundant spaces:
+    name = " ".join(name.split())
+    return name
+
+
+def clean_sentence(sentence):
+    """
+
+    Parameters
+    ----------
+    sentence
+
+    Returns
+    -------
+
+    """
+    # If there is a space in front of a dot, remove it:
+    sentence = sentence.replace(" .", ".")
+    # If there is a space in front of a 's, remove it:
+    sentence = sentence.replace(" 's", "'s")
+    # TODO: In de output kijken of er nog meer nodig is.
+    return sentence

@@ -3,7 +3,7 @@ import nltk
 
 from datamanager import load_corpus
 from evaluation import macro_score, average_grammar_score, \
-    corpus_bleu_score, word_error_rate
+    corpus_bleu_score
 from generate_templates import generate_templates, \
     fill_in_most_frequent_template
 
