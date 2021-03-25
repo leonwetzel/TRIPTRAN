@@ -15,7 +15,7 @@ google-auth-oauthlib==0.4.1
 grpcio==1.33.1
 idna==2.10
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 joblib==0.17.0
 language-check==1.1
 Markdown==3.3.2
