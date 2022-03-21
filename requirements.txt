@@ -45,6 +45,6 @@ thinc==7.4.1
 tqdm==4.50.2
 tzlocal==2.1
 urllib3==1.25.10
-waitress==1.4.4
+waitress==2.1.1
 wasabi==0.8.0
 Werkzeug==1.0.1
